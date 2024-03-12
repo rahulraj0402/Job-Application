@@ -4,12 +4,15 @@ package com.rahul.jobMicroservice.job.Impl;
 import com.rahul.jobMicroservice.job.Job;
 import com.rahul.jobMicroservice.job.JobRepository;
 import com.rahul.jobMicroservice.job.JobService;
+import com.rahul.jobMicroservice.job.dto.JobWithCompanyDTO;
 import com.rahul.jobMicroservice.job.external.Company;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 
 
@@ -29,17 +32,41 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<Job> findAll() {
+    public List<JobWithCompanyDTO> findAll() {
+
+        List<Job> jobs = jobRepository.findAll();
+
+        List<JobWithCompanyDTO> jobWithCompanyDTOs = new ArrayList<>();
+
         RestTemplate restTemplate = new RestTemplate();
-        Company company = restTemplate.getForObject("http://localhost:8081/companies/1" , Company.class);
-        System.out.println("COMPANY : " + company.getName());
-        System.out.println("COMPANY : " + company.getId());
-        System.out.println("COMPANY : " + company.getDescription());
-        return jobRepository.findAll();
+
+        // for each job object we are going to pass the comany object as well
+
+        for (Job job : jobs){
+            JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
+            jobWithCompanyDTO.setJob(job);
+            Company company = restTemplate.
+                    getForObject("http://localhost:8081/companies/"+job.getCompanyId(), Company.class);
+            jobWithCompanyDTO.setCompany(company);
+            jobWithCompanyDTOs.add(jobWithCompanyDTO);
+        }
+
+
+
+//        Company company = restTemplate.getForObject("http://localhost:8081/companies/1" , Company.class);
+//        System.out.println("COMPANY : " + company.getName());
+//        System.out.println("COMPANY : " + company.getId());
+//        System.out.println("COMPANY : " + company.getDescription());
+
+
+//        return jobRepository.findAll();
+
+
+        return jobWithCompanyDTOs;
     }
 
     @Override
-    public void createJob(Job job) {
+    public void createJob(Job job ) {
         job.setId(nextId++);
         jobRepository.save(job);
     }
