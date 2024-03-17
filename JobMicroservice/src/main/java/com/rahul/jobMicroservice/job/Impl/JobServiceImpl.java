@@ -21,8 +21,15 @@ public class JobServiceImpl implements JobService {
 
    // private List<Job> jobs = new ArrayList<>();
 
+
+
     @Autowired
     JobRepository jobRepository;
+
+
+    @Autowired
+    RestTemplate restTemplate;
+
 
     private long nextId  = 1L ;
 
@@ -46,7 +53,7 @@ public class JobServiceImpl implements JobService {
             JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
             jobWithCompanyDTO.setJob(job);
             Company company = restTemplate.
-                    getForObject("http://localhost:8081/companies/"+job.getCompanyId(), Company.class);
+                    getForObject("http://COMPANY-SERVICE:8081/companies/"+job.getCompanyId(), Company.class);
             jobWithCompanyDTO.setCompany(company);
             jobWithCompanyDTOs.add(jobWithCompanyDTO);
         }

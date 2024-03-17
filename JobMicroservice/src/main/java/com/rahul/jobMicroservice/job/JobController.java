@@ -20,10 +20,11 @@ public class JobController {
     }
 
     // end point for returning all the jobs available
+//    JobWithCompanyDTO
     @GetMapping
     public ResponseEntity<List<JobWithCompanyDTO>> findAall(){
 
-        return new ResponseEntity<>(jobService.findAll() , HttpStatus.CREATED);
+        return new ResponseEntity<>(jobService.findAll() , HttpStatus.OK);
     }
     //  for posting the jobs
     @PostMapping
