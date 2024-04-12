@@ -6,14 +6,15 @@ import com.rahul.jobMicroservice.job.JobRepository;
 import com.rahul.jobMicroservice.job.JobService;
 import com.rahul.jobMicroservice.job.dto.JobWithCompanyDTO;
 import com.rahul.jobMicroservice.job.external.Company;
+import com.rahul.jobMicroservice.job.mapper.JobMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -42,34 +43,35 @@ public class JobServiceImpl implements JobService {
     public List<JobWithCompanyDTO> findAll() {
 
         List<Job> jobs = jobRepository.findAll();
-
         List<JobWithCompanyDTO> jobWithCompanyDTOs = new ArrayList<>();
 
-        RestTemplate restTemplate = new RestTemplate();
 
-        // for each job object we are going to pass the comany object as well
+        return jobs.stream().map(this::convertToDTO)
+                .collect(Collectors.toList());
 
-        for (Job job : jobs){
-            JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
-            jobWithCompanyDTO.setJob(job);
+//      [ here above we have used streams for each job we are finding the corresponding companies and collecting as list . ] ;
+//      [ for each job convertToDTO function is invoking
+    }
+
+
+    private JobWithCompanyDTO convertToDTO(Job job){
+
+//            JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
+//            jobWithCompanyDTO.setJob(job);  // this will not work since we have modified the DTO |
+        // for above we can create a mapper class for setting the jobs
+       // RestTemplate restTemplate = new RestTemplate();
+
             Company company = restTemplate.
                     getForObject("http://COMPANY-SERVICE:8081/companies/"+job.getCompanyId(), Company.class);
+
+            JobWithCompanyDTO jobWithCompanyDTO = JobMapper.mapWithJobWithCompanyDTO(job , company);
+
+
             jobWithCompanyDTO.setCompany(company);
-            jobWithCompanyDTOs.add(jobWithCompanyDTO);
-        }
+
+            return jobWithCompanyDTO;
 
 
-
-//        Company company = restTemplate.getForObject("http://localhost:8081/companies/1" , Company.class);
-//        System.out.println("COMPANY : " + company.getName());
-//        System.out.println("COMPANY : " + company.getId());
-//        System.out.println("COMPANY : " + company.getDescription());
-
-
-//        return jobRepository.findAll();
-
-
-        return jobWithCompanyDTOs;
     }
 
     @Override
@@ -79,8 +81,10 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Job getJobByJobId(Long id) {
-       return jobRepository.findById(id).orElse(null);
+    public JobWithCompanyDTO getJobByJobId(Long id) {
+
+       Job job =  jobRepository.findById(id).orElse(null);
+       return convertToDTO(job);
     }
 
 

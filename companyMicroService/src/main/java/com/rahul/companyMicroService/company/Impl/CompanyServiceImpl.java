@@ -1,11 +1,14 @@
 package com.rahul.companyMicroService.company.Impl;
 
 
+import com.netflix.discovery.converters.Auto;
 import com.rahul.companyMicroService.company.Company;
 import com.rahul.companyMicroService.company.CompanyService;
 import com.rahul.companyMicroService.company.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+
 
 import java.util.List;
 import java.util.Optional;
@@ -16,13 +19,11 @@ public class CompanyServiceImpl implements CompanyService {
     @Autowired
     private CompanyRepository companyRepository;
 
+
     public CompanyServiceImpl(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
     }
 
-
-    public CompanyServiceImpl() {
-    }
 
     @Override
     public List<Company> getAllCompanies() {
@@ -73,6 +74,5 @@ public class CompanyServiceImpl implements CompanyService {
     public List<Company> findByName(String name) {
         return companyRepository.findByName(name);
     }
-
 
 }
