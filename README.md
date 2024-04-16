@@ -1,4 +1,4 @@
-# Job Application Project
+# Job Match Pro ( A job application ) 
 
 This is a project aimed at managing job applications utilizing microservices architecture. The project is built using Java, Spring Boot, Spring Data JPA, and Docker for PostgreSQL database. It also utilizes Eureka for service registry. Additionally, future integration with RabbitMQ and Kubernetes is planned.
 
