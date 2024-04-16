@@ -1,14 +1,14 @@
 package com.rahul.jobMicroservice.job;
 
-import com.rahul.jobMicroservice.job.dto.JobWithCompanyDTO;
+import com.rahul.jobMicroservice.job.dto.JobDTO;
 
 import java.util.List;
 
 public interface JobService {
-    List<JobWithCompanyDTO> findAll();
+    List<JobDTO> findAll();
     void createJob(Job job);
 
-    JobWithCompanyDTO getJobByJobId(Long id);
+    JobDTO getJobByJobId(Long id);
 
     boolean deleteById(Long id);
 

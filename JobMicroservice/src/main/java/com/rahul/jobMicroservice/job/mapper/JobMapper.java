@@ -1,24 +1,34 @@
 package com.rahul.jobMicroservice.job.mapper;
 
 import com.rahul.jobMicroservice.job.Job;
-import com.rahul.jobMicroservice.job.dto.JobWithCompanyDTO;
+import com.rahul.jobMicroservice.job.dto.JobDTO;
 import com.rahul.jobMicroservice.job.external.Company;
+import com.rahul.jobMicroservice.job.external.Review;
+
+import java.util.List;
 
 public class JobMapper {
 
     // this class helps us to map the job and company to jobsWithCompanyDTO
 
-    public static JobWithCompanyDTO mapWithJobWithCompanyDTO(Job job, Company company){
+    public static JobDTO mapWithJobWithCompanyDTO(Job job, Company company , List<Review> reviews){
 
-        JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
-        jobWithCompanyDTO.setId(job.getId());
-        jobWithCompanyDTO.setTitle(job.getTitle());
-        jobWithCompanyDTO.setDescription(job.getDescription());
-        jobWithCompanyDTO.setLocation(job.getLocation());
-        jobWithCompanyDTO.setMaxSalary(job.getMaxSalary());
-        jobWithCompanyDTO.setMinSalary(job.getMinSalary());
-        jobWithCompanyDTO.setCompany(company);
+        JobDTO jobDTO = new JobDTO();
+        jobDTO.setId(job.getId());
+        jobDTO.setTitle(job.getTitle());
+        jobDTO.setDescription(job.getDescription());
+        jobDTO.setLocation(job.getLocation());
+        jobDTO.setMaxSalary(job.getMaxSalary());
+        jobDTO.setMinSalary(job.getMinSalary());
 
-        return jobWithCompanyDTO;
+//       [ here we are setting the company for better JSON view ] or to avoide the nested json  ]
+        jobDTO.setCompany(company);
+
+//       [ setting the review ]
+        jobDTO.setReview(reviews);
+
+
+        return jobDTO;
     }
 }
+
