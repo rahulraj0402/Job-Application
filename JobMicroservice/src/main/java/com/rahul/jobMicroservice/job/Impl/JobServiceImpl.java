@@ -1,9 +1,10 @@
 package com.rahul.jobMicroservice.job.Impl;
 
-
 import com.rahul.jobMicroservice.job.Job;
 import com.rahul.jobMicroservice.job.JobRepository;
 import com.rahul.jobMicroservice.job.JobService;
+import com.rahul.jobMicroservice.job.clients.CompanyClient;
+import com.rahul.jobMicroservice.job.clients.ReviewClient;
 import com.rahul.jobMicroservice.job.dto.JobDTO;
 import com.rahul.jobMicroservice.job.external.Company;
 import com.rahul.jobMicroservice.job.external.Review;
@@ -35,6 +36,12 @@ public class JobServiceImpl implements JobService {
     @Autowired
     RestTemplate restTemplate;
 
+    @Autowired
+    private CompanyClient companyClient;
+
+    @Autowired
+    private ReviewClient reviewClient;
+
 
     private long nextId  = 1L ;
 
@@ -64,18 +71,26 @@ public class JobServiceImpl implements JobService {
 // review-service
         // [ .getForObject | this we mainly use when ae get a single object | a single object
         // [ .exchange | thus us is mainly used for the generic type | here the reviews are list
+//
 
-            Company company = restTemplate.getForObject("http://COMPANY-SERVICE:8081/companies/"+job.getCompanyId(), Company.class);
-
-            ResponseEntity<List<Review>> reviewResponseEntity =  restTemplate.exchange(
-                    "http://REVIEW-SERVICE:8083/reviews?companyId=" + job.getCompanyId(),
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Review>>() {
-                    });
+        //  [ this below lines are before implementing the openFeing so here we earlier using the restTempplate ]
+//        Company company = restTemplate.getForObject("http://COMPANY-SERVICE:8081/companies/"+job.getCompanyId(), Company.class);
 
 
-            List<Review> reviews = reviewResponseEntity.getBody();
+//      [ after implementing the openFeing just calling the meathods .getCompany ]
+        Company company = companyClient.getCompany(job.getCompanyId());
+//       [ after implementing the openFeign ]
+        List<Review> reviews = reviewClient.getReviews(job.getCompanyId());
+
+//  [ before implementing the openFeign ]
+//            ResponseEntity<List<Review>> reviewResponseEntity =  restTemplate.exchange(
+//                    "http://REVIEW-SERVICE:8083/reviews?companyId=" + job.getCompanyId(),
+//                    HttpMethod.GET,
+//                    null,
+//                    new ParameterizedTypeReference<List<Review>>() {
+//                    });
+//            List<Review> reviews = reviewResponseEntity.getBody();
+
             JobDTO jobDTO = JobMapper.mapWithJobWithCompanyDTO(job , company , reviews);
 
 
