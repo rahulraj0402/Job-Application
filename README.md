@@ -19,6 +19,7 @@ The Companies microservice deals with company-related functionalities like addin
 - Spring Data JPA
 - Docker (for PostgreSQL database)
 - Eureka (Service Registry)
+- openFeign( for the inter service communication  [ removed the use of rest template ] ) 
 - RabbitMQ (Planned for future integration)
 - Kubernetes (Planned for future integration)
 
