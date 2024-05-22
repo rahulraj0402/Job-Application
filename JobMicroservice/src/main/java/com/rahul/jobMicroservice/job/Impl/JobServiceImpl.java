@@ -9,6 +9,8 @@ import com.rahul.jobMicroservice.job.dto.JobDTO;
 import com.rahul.jobMicroservice.job.external.Company;
 import com.rahul.jobMicroservice.job.external.Review;
 import com.rahul.jobMicroservice.job.mapper.JobMapper;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -27,7 +29,7 @@ public class JobServiceImpl implements JobService {
 
    // private List<Job> jobs = new ArrayList<>();
 
-
+    int attempted = 0;
 
     @Autowired
     JobRepository jobRepository;
@@ -50,9 +52,13 @@ public class JobServiceImpl implements JobService {
         this.jobRepository = jobRepository;
     }
 
-    @Override
-    public List<JobDTO> findAll() {
 
+
+    @Override
+    //    @CircuitBreaker(name ="companyBreaker" , fallbackMethod = "companyBreakerFallback")
+    @Retry(name ="companyBreaker" , fallbackMethod = "companyBreakerFallback")
+    public List<JobDTO> findAll() {
+        System.out.println("attempted : " + ++attempted);
         List<Job> jobs = jobRepository.findAll();
         List<JobDTO> jobDTOS = new ArrayList<>();
 
@@ -62,6 +68,12 @@ public class JobServiceImpl implements JobService {
 
 //      [ here above we have used streams for each job we are finding the corresponding companies and collecting as list . ] ;
 //      [ for each job convertToDTO function is invoking
+    }
+
+    public List<String> companyBreakerFallback(Exception e){
+        List<String> list = new ArrayList<>();
+        list.add("fall back method is working since the microservice is down  ");
+        return list;
     }
 
 
