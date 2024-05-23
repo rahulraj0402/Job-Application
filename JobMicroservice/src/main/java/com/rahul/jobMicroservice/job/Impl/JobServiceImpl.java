@@ -10,7 +10,10 @@ import com.rahul.jobMicroservice.job.external.Company;
 import com.rahul.jobMicroservice.job.external.Review;
 import com.rahul.jobMicroservice.job.mapper.JobMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.RateLimiterConfig;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -56,7 +59,9 @@ public class JobServiceImpl implements JobService {
 
     @Override
     //    @CircuitBreaker(name ="companyBreaker" , fallbackMethod = "companyBreakerFallback")
-    @Retry(name ="companyBreaker" , fallbackMethod = "companyBreakerFallback")
+//    @Retry(name ="companyBreaker" , fallbackMethod = "companyBreakerFallback")
+//    @RateLimiter(name ="companyBreaker" , fallbackMethod = "companyBreakerFallback")
+    @RateLimiter(name = "companyBreaker" ,fallbackMethod = "companyBreakerFallback" )
     public List<JobDTO> findAll() {
         System.out.println("attempted : " + ++attempted);
         List<Job> jobs = jobRepository.findAll();
@@ -72,7 +77,7 @@ public class JobServiceImpl implements JobService {
 
     public List<String> companyBreakerFallback(Exception e){
         List<String> list = new ArrayList<>();
-        list.add("fall back method is working since the microservice is down  ");
+        list.add(" too many request so the fall back method is being triggred   ");
         return list;
     }
 
