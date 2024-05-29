@@ -20,7 +20,7 @@ The Companies microservice deals with company-related functionalities like addin
 - Docker (for PostgreSQL database)
 - Eureka (Service Registry)
 - openFeign( for the inter service communication  [ removed the use of rest template ] ) 
-- RabbitMQ (Planned for future integration)
+- RabbitMQ for Asynchronous Communication between reviews and companies 
 - Kubernetes (Planned for future integration)
 
 ## Setup Instructions
