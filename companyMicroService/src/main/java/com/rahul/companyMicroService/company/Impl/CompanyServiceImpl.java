@@ -5,6 +5,10 @@ import com.netflix.discovery.converters.Auto;
 import com.rahul.companyMicroService.company.Company;
 import com.rahul.companyMicroService.company.CompanyService;
 import com.rahul.companyMicroService.company.CompanyRepository;
+import com.rahul.companyMicroService.company.clients.ReviewClients;
+import com.rahul.companyMicroService.company.dto.ReviewMessage;
+import feign.FeignException;
+import jakarta.ws.rs.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private ReviewClients reviewClients;
 
 
     public CompanyServiceImpl(CompanyRepository companyRepository) {
@@ -46,7 +53,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public void createCompany(Company company) {
-      companyRepository.save(company);
+        companyRepository.save(company);
     }
 
     @Override
@@ -73,6 +80,24 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public List<Company> findByName(String name) {
         return companyRepository.findByName(name);
+    }
+
+    @Override
+    public void updateCompanyRating(ReviewMessage reviewMessage) {
+
+
+
+        // 1. get the company for which the new review is added
+       Company company = companyRepository.findById(reviewMessage.getCompanyId())
+               .orElseThrow(() -> new NotFoundException("company not found" + reviewMessage.getCompanyId()));
+
+       // 2. we also have to get the average rating from review Microservice using feing client
+       Double average_rating = reviewClients.getAverateRatingForCompany(reviewMessage.getCompanyId());
+       // 3. update the new average rating
+       company.setAverageRating(average_rating);
+        // 4. update the average rating and save it
+       companyRepository.save(company);
+
     }
 
 }

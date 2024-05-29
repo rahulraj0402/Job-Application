@@ -1,5 +1,7 @@
 package com.rahul.companyMicroService.company;
 
+import com.rahul.companyMicroService.company.dto.ReviewMessage;
+
 import java.util.List;
 
 public interface CompanyService {
@@ -11,5 +13,7 @@ public interface CompanyService {
     boolean deleteCompanyById(Long id);
 
     List<Company> findByName(String name);
+
+    public void updateCompanyRating(ReviewMessage reviewMessage);
 
 }
