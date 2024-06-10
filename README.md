@@ -32,7 +32,6 @@ The Companies microservice deals with company-related functionalities like addin
 6. Access the microservices through the Eureka service registry.
 
 ## Future Enhancements
-- Integration with RabbitMQ for asynchronous communication between microservices.
 - Deployment of microservices on Kubernetes for scalability and resilience.
 
 Feel free to contribute to the project by submitting pull requests or reporting issues.
